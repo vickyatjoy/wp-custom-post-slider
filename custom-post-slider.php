@@ -12,15 +12,22 @@ License: GPL2
 
 <?php
 class wp_post_slider extends WP_Widget {
-
 	// constructor
 	function wp_post_slider() {
 		parent::WP_Widget(
 			'wp_post_slider', // Base ID
 			__('Post Slider', 'text_domain'), // Name
 			array( 'description' => __( 'A simple plugin that can slide post based on its type', 'text_domain' ), ));
+			add_action('init',array(&$this,'loadScript'));   
+	}	
+	function loadScript()
+	{
+		wp_register_style('cp_style.css', plugins_url('/css/style.css', __FILE__));
+			wp_enqueue_style('cp_style.css' );		
+			wp_enqueue_script('wp_cp_js_min',plugins_url('/js/jquery.min.1.11.js', __FILE__), array('jquery'));
+			wp_enqueue_script('wp_cp_js_chili',plugins_url('/js//chili.1.7.js', __FILE__), array('jquery'));
+			wp_enqueue_script('wp_cp_js_cycle',plugins_url('/js/jquery.cycle.js', __FILE__), array('jquery'));
 	}
-
 	// widget form creation
 	function form($instance) 
 	{	
@@ -134,33 +141,39 @@ class wp_post_slider extends WP_Widget {
 	   $show_date = $instance['show_date'];		
 	   $effect = ($effect_browser !='')?$effect_browser:'scrollHorz';
 	   $speed = ($effect_speed !='')?$effect_speed:600;	  
+	   
+	   
+		
+
 ?>
 
 <script type="text/javascript">
-$.fn.cycle.defaults.timeout = 6000;
-	$('#<?php echo $this->id; ?> #s2').cycle({
+(function(){
+jQuery.fn.cycle.defaults.timeout = 6000;
+	jQuery('#<?php echo $this->id; ?> #s2').cycle({
     fx:     '<?php echo $effect; ?>',
     speed:  <?php echo $speed; ?>,
     timeout: 0,
-    next:   '#<?php echo $this->id; ?> #prev2',
-    prev:   '#<?php echo $this->id; ?> #next2',
+    next:   '#<?php echo $this->id; ?> .prev',
+    prev:   '#<?php echo $this->id; ?> .next',
 });
+}());
 </script>
+
 <?php
 	   echo $before_widget;
 	   // Display the widget
-	   echo '<div>';
+	   echo '<div class="cp_slider">';
 	
 	   // Check if title is set
 	   if ( $title ) {
-		  echo $before_title . $title.'<a id="prev2" href="#"></a> <a id="next2" href="#"></a>' . $after_title;
+		  echo $before_title . $title.'<a class="prev" href="#"></a> <a class="next" href="#"></a>' . $after_title;
 	   }
 	   $cs_meta = explode(',',$custom_meta);
 	   $post_details = $this->post_slider($post_type,$post_count, $show_thumbnail, $display_count, $cs_meta, $show_date);
 	   		
 	   echo '</div>';
-	   echo $after_widget;
-	
+	   echo $after_widget;		
 	}
 	function post_slider($type,$count,$thumb,$dcount,$meta_keys=0,$show_date)
 	{
