@@ -24,7 +24,7 @@ class wp_post_slider extends WP_Widget {
 	{
 		wp_register_style('cp_style.css', plugins_url('/css/style.css', __FILE__));
 			wp_enqueue_style('cp_style.css' );		
-			wp_enqueue_script('wp_cp_js_min',plugins_url('/js/jquery.min.1.11.js', __FILE__), array('jquery'));
+			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script('wp_cp_js_chili',plugins_url('/js//chili.1.7.js', __FILE__), array('jquery'));
 			wp_enqueue_script('wp_cp_js_cycle',plugins_url('/js/jquery.cycle.js', __FILE__), array('jquery'));
 	}
